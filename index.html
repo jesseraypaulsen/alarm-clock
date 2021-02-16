@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <script defer src="index.js"></script>
+  </head>
+  <body>
+    
+    <label for="hour">Hour:</label>
+    <select name="hour" id="hour"></select>
+    
+    <label for="minute">Minute:</label>
+    <select name="minute" id="minute"></select>
+    
+    <label for="seconds">Second:</label>
+    <select name="second" id="second"></select>
+
+    <input type="radio" id="am" name="period" value="am">
+    <label for="am">a.m.</label>
+    <input type="radio" id="pm" name="period" value="pm">
+    <label for="pm">p.m.</label>
+    
+    <button>Set Alarm</button>
+    
+    <div id="showtime"></div>
+    <div id="alarm"></div>
+  </body>
+</html>
