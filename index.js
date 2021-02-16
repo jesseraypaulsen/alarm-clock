@@ -52,13 +52,22 @@ const convertToStandard = (militaryHour) => {
   }
 }
 
+function padZero() {
+  let args = Array.prototype.slice.call(arguments);
+  return args.map(arg => {
+    if (arg < 10) arg = '0' + arg;
+    return arg;
+  });
+}
+
 const parseTime = () => {
   let now = new Date();
-  let hr = now.getHours(); 
-  let min = now.getMinutes();
-  let sec = now.getSeconds();
-  let period = std ? getPeriod(hr) : null; // must get period before converting hour wrt logic above
-  hr = std ? convertToStandard(hr) : hr;
+  let _hr = now.getHours(); 
+  let _min = now.getMinutes();
+  let _sec = now.getSeconds();
+  let period = std ? getPeriod(_hr) : null; // must get period before converting hour wrt logic above
+  _hr = std ? convertToStandard(_hr) : _hr;
+  let [hr, min, sec] = padZero(_hr, _min, _sec);
   now = `${hr} ${min} ${sec} ${period ? period : ''}`;
   return now;
 }
@@ -94,11 +103,16 @@ function filloutOptions() {
 }
 
 function setAlarm() {
-  let values = ['#hour', '#minute', '#second', '[name="period"]'].map(sel => {
+  let values = ['#hour', '#minute', '#second'].map(sel => {
     return document.querySelector(sel).value;
   });
-  console.log(values);
-  alarmTime = values.join(" ");
+  let radios = document.querySelectorAll('[name="period"]');
+  let period;
+  radios.forEach(rad => {
+    if(rad.checked) period = rad.value;
+  });
+  let parts = padZero(values[0], values[1], values[2]);
+  alarmTime = parts.join(" ") + ' ' + period;
   document.querySelector('#alarm').innerHTML = alarmTime;
 }
 
