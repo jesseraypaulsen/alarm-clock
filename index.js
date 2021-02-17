@@ -28,7 +28,7 @@ let alarmTime = null;
 let std = true; // military vs standard
 
 const getPeriod = (militaryHour) => {
-  if (militaryHour > 12) {
+  if (militaryHour > 11) {
     return 'pm';
   } else {
     return 'am';
