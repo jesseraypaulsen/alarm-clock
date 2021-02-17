@@ -81,8 +81,7 @@ const tick = () => {
 }
 
 function startClock() {
-  let a = setInterval(tick, 1000);
-  //clearInterval(a);
+  setInterval(tick, 1000);
 }
 
 function filloutOptions() {
@@ -122,10 +121,10 @@ function checkAlarm(now) {
   }
 }
 
-const go = function() {
+const start = function() {
   filloutOptions();
   startClock();
   document.querySelector('button').addEventListener('click', setAlarm);
 }
 
-go();
+document.body.onload = start;
