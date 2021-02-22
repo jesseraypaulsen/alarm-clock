@@ -2,8 +2,8 @@
 // then the alarm clock can be made customizable with options that get passed in.
 
 const start = function() {
-  filloutOptions();
-  startClock();
+  insertFormOptions();
+  Clock().start();
   document.querySelector('button').addEventListener('click', addAlarmAndRender);
 }
 
