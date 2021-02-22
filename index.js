@@ -1,32 +1,8 @@
-// daily reminders, alarms, notifications, scheduler
 
-// click on each item to display directions/info in a tile/card
+let alarms = []; // model ie data
+let std = true; // state: military vs standard
 
-//https://code-boxx.com/simple-javascript-alarm-clock/
-
-// start with a naive procedural approach, then convert to classes later on
-
-/*
-function taskAlarm() {
-  return new taskAlarm.init();
-}
-
-taskAlarm.init = function() {
-  this.tasks = [];
-  this.description = '';
-  this.what = '';
-}
-
-taskAlarm.init.prototype = taskAlarm.prototype;
-
-taskAlarm.prototype = {
-  checkAlarm: checkAlarm,
-}; */
-
-//-------------------------------------------------------------------
-let alarmTime = null;
-let std = true; // military vs standard
-
+// clock
 const getPeriod = (militaryHour) => {
   if (militaryHour > 11) {
     return 'pm';
@@ -35,6 +11,7 @@ const getPeriod = (militaryHour) => {
   }
 }
 
+// clock
 const convertToStandard = (militaryHour) => {
   let hr = militaryHour;
 
@@ -52,6 +29,7 @@ const convertToStandard = (militaryHour) => {
   }
 }
 
+// clock and alarm
 function padZero() {
   let args = Array.prototype.slice.call(arguments);
   return args.map(arg => {
@@ -60,6 +38,7 @@ function padZero() {
   });
 }
 
+// clock only
 const parseTime = () => {
   let now = new Date();
   let _hr = now.getHours(); 
@@ -72,18 +51,34 @@ const parseTime = () => {
   return now;
 }
 
+
+// the core of the app
+function startClock() {
+  setInterval(tick, 1000);
+}
+
+// where the clock and the alarms meet
 const tick = () => {
   let now = parseTime();
   // display the current time
   document.querySelector('#showtime').innerHTML = now;
   // check to see if the current time matches what the alarm clock is set to
-  checkAlarm(now);
+  checkAlarms(now);
 }
 
-function startClock() {
-  setInterval(tick, 1000);
-}
+//TODO: needs to be asynchronous
+function checkAlarms(now) {
+  //this.alarms...
+  alarms.forEach(alarm => {
+    if (now === alarm.time) {
+      alert('ding dong!');
+    }
+  })
+}   
+  // we have a one-to-many relationship between 'now' and the alarms, 
+  // which makes me wonder if data-binding might be appropriate here.
 
+// alarm only
 function filloutOptions() {
   let i, j;
   const dropDownLists = document.querySelectorAll('select');
@@ -101,7 +96,9 @@ function filloutOptions() {
   });
 }
 
-function setAlarm() {
+//TODO: add validation
+function getAlarmTime() {
+  let alarmTime;
   let values = ['#hour', '#minute', '#second'].map(sel => {
     return document.querySelector(sel).value;
   });
@@ -111,20 +108,45 @@ function setAlarm() {
     if(rad.checked) period = rad.value;
   });
   let parts = padZero(values[0], values[1], values[2]);
+  
   alarmTime = parts.join(" ") + ' ' + period;
-  document.querySelector('#alarm').innerHTML = alarmTime;
+  
+  return alarmTime;
 }
 
-function checkAlarm(now) {
-  if (now === alarmTime) {
-    alert('ding dong!');
-  }
+function getAlarmDescription() {
+  let desc = document.querySelector('#description').value;
+  return desc;
 }
 
-const start = function() {
-  filloutOptions();
-  startClock();
-  document.querySelector('button').addEventListener('click', setAlarm);
+function createAlarmObject() {
+  let alarm = {};
+  alarm.time = getAlarmTime();
+  alarm.description = getAlarmDescription();
+  alarm.element = document.createElement('li');
+  console.log(alarm);
+  return alarm;
 }
 
-document.body.onload = start;
+function createAlarmItem() {
+  let alarmObj = createAlarmObject();
+  let desc = document.createElement('span');
+  let time = document.createElement('span');
+  desc.innerHTML = alarmObj.description;
+  time.innerHTML = alarmObj.time;
+  alarmObj.element.appendChild(desc);
+  alarmObj.element.appendChild(time);
+  return alarmObj;
+}
+
+function addAlarmAndRender() {
+  let alarm = createAlarmItem();
+  alarms.push(alarm);
+  render();
+}
+
+function render() {
+  alarms.forEach(alarm => {
+    document.querySelector('#alarms').appendChild(alarm.element);
+  });
+}
